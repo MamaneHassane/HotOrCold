@@ -6,17 +6,27 @@ namespace HotOrCold.Entities;
 
 public class Drink
 {
+    // L'identifiant de la boisson
     [Required(ErrorMessage = "L'identifiant de la boisson est manquant")]
-    private int Id { get; set; }
+    public int DrinkId { get; set; }
     
+    // Le type de la boisson
     [Required] 
     [StringLength(11,ErrorMessage = "Le nom de la boisson est manquant",MinimumLength = 1)]
-    private DrinkType Name { get; set; }
+    public DrinkType Name { get; set; }
     
+    // Le prix par litre de la boisson
     [Range(1, 5)] 
+    public double PricePerLiter { get; set; }
     
-    private Double Price { get; set; }
-
-    private byte[] Image { get; set; }
+    // L'image de la boisson
+    public byte[] Image { get; set; }
+    
+    // Propriété de navigation OneToMany : Un Drink possède plusieurs DrinkCopy
+    public ICollection<DrinkCopy> DrinkCopies { get; set; }
+    
+    // Propriété de navigation ManyToMany : Un Drink possède plusieurs Category
+    public ICollection<Category> Categories { get; set; }
+    
 
 }
