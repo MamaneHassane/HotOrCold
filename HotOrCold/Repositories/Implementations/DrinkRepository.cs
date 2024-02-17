@@ -1,10 +1,11 @@
 using HotOrCold.Datas;
 using HotOrCold.Entities;
+using HotOrCold.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Repositories;
 
-public class DrinkRepository
+public class DrinkRepository : IDrinkRepository
 {
     private readonly ApplicationDbContext _context;
     public DrinkRepository(ApplicationDbContext context)

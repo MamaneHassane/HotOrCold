@@ -1,9 +1,10 @@
 using HotOrCold.Datas;
 using HotOrCold.Entities;
+using HotOrCold.Repositories.Interfaces;
 
 namespace HotOrCold.Repositories;
 
-public class CartRepository 
+public class CartRepository : ICartRepository
 {
     private readonly ApplicationDbContext _context;
 
@@ -51,7 +52,7 @@ public class CartRepository
         return true;
     }
     
-    public bool RemoveDrinkCopy(int cartId, int drinkCopyId, int quantityInLiter)
+    public bool RemoveDrinkCopy(int cartId, int drinkCopyId)
     {
         var theDrinkCopy = this._context.DrinkCopies.Find(drinkCopyId);
         var theCart = this._context.Carts.Find(cartId);

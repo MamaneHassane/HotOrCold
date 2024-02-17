@@ -1,10 +1,11 @@
 using HotOrCold.Datas;
 using HotOrCold.Entities;
+using HotOrCold.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Repositories;
 
-public class CustomerRepository
+public class CustomerRepository : ICustomerRepository
 {
     private readonly ApplicationDbContext _context;
     
