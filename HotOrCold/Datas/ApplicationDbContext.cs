@@ -3,23 +3,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Datas;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    // Le constructeur, qui est vide et dont les options sont celles des entités du context
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-        
-    }
     // Les catégories, une catégorie contient plusieurs boissons et une boisson possède plusieurs catégories
-    public DbSet<Category> Categories { get; set; }
+    public DbSet<Category> Categories => Set<Category>();
     // Les boissons, une boisson possède plusieus catégories et plusieurs exemplaires qui seront vendus
-    public DbSet<Drink> Drinks { get; set; }
+    public DbSet<Drink> Drinks => Set<Drink>();
     // Les exemplaires de boisson vendus, chaque exemplaire appartient à un seul panier
-    public DbSet<DrinkCopy> DrinkCopies { get; set; }
+    public DbSet<DrinkCopy> DrinkCopies => Set<DrinkCopy>();
     // Les clients, un client possède un panier
-    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Customer> Customers => Set<Customer>();
     // Les paniers, un panier appartient à un client et contient plusieurs exemplaires de boissons
-    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Cart> Carts => Set<Cart>();
     // Les commandes, un Customer donne lieu à plusieurs commandes, un commande vient d'un seul Customer
-    public DbSet<Command> Commands { get; set; }
+    public DbSet<Command> Commands => Set<Command>();
 }

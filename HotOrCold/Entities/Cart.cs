@@ -12,7 +12,7 @@ public class Cart
      [ForeignKey(("Customer"))]
      public int CustomerId { get; set; }
      // Propriété de navigation inverse OneToOne : pas nécéssaire mais bonne pratique
-     public Customer Customer { get; set; }
+     public Customer? Customer { get; set; }
      
      // Un Cart contient plusieurs DrinkCopy
      // Propriéte de navigation OneToMany

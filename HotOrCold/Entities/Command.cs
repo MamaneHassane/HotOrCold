@@ -7,7 +7,7 @@ public class Command
     public Customer Customer { get; set; }
     
     // Une Command contient une liste de DrinkCopy
-    public ICollection<DrinkCopy> DrinkCopies { get; set; }
+    public ICollection<DrinkCopy>? DrinkCopies { get; set; }
     
     // Une Command à un prix dérivé
     public double Price

@@ -22,10 +22,12 @@ public class DrinksController : ControllerBase
     {
         return Ok();
     }
+    [HttpPut("{id}")]
     public async Task<ActionResult<List<Drink>>> UpdateDrink()
     {
         return Ok();
     }
+    [HttpDelete("{id}")]
     public async Task<ActionResult<List<Drink>>> DeleteDrink()
     {
         return Ok();

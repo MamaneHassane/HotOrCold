@@ -1,4 +1,6 @@
 using HotOrCold.Datas;
+using HotOrCold.Repositories;
+using HotOrCold.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +11,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Ajouter les contrôleurs
 builder.Services.AddControllers();
 
-
+// Ajouter Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configurer l'injection de dépendances pour le contexte de la base de données
+var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddSqlServer<ApplicationDbContext>(ConnectionString);
 
+// Ajouter les répositories
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICommandRepository, CommandRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+
+// Construire l'application
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,11 +35,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Configurer l'injection de dépendances pour le contexte de la base de données
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+
+
 
 app.UseHttpsRedirection();
 

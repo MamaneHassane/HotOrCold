@@ -8,8 +8,8 @@ namespace HotOrCold.Repositories;
 public class CommandRepository : ICommandRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly CartRepository _cartRepository;
-    public CommandRepository(ApplicationDbContext context, CartRepository cartRepository)
+    private readonly ICartRepository _cartRepository;
+    public CommandRepository(ApplicationDbContext context, ICartRepository cartRepository)
     {
         _context = context;
         _cartRepository = cartRepository;
