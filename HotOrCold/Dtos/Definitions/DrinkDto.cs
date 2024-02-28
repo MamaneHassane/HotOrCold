@@ -1,13 +1,13 @@
 namespace HotOrCold.Dtos;
 
-public record DrinkDto (
-    
+public record CreateDrinkDto (
+    // Pas besoin pour l'instant
 );
 
-public record CreateDrinkDto (
-    
+public record ReadDrinkDto (
+    // Pas besoin pour l'instant
 );
 
 public record UpdateDrinkDto (
-    
+    // Pas besoin pour l'instant
 );

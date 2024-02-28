@@ -5,61 +5,48 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Repositories;
 
-public class CustomerRepository : ICustomerRepository
+public class CustomerRepository(ApplicationDbContext context) : ICustomerRepository
 {
-    private readonly ApplicationDbContext _context;
-    
-    public CustomerRepository(ApplicationDbContext context)
-    {
-        this._context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public void Create(Customer customer)
     {
-        this._context.Add(customer);
-        this._context.SaveChanges();
+        _context.Add(customer);
+        _context.SaveChanges();
     }
-
     public IEnumerable<Customer> GetAll()
     {
-        return this._context.Customers.AsNoTracking().ToList();
+        return [.. _context.Customers.AsNoTracking()];
     }
-
     public Customer? Get(int id)
     {
-        return this._context.Customers.Find(id);
+        return _context.Customers.Find(id);
     }
-
     public void Update(Customer updatedCustomer)
     {
-        this._context.Update(updatedCustomer);
-        this._context.SaveChanges();
+        _context.Update(updatedCustomer);
+        _context.SaveChanges();
     }
-
     public bool IncreaseBalance(int id, int amountToAdd)
     {
-        var theCustomer = this._context.Customers.Find(id);
+        var theCustomer = _context.Customers.Find(id);
         if (theCustomer is null) return false;
         theCustomer.Balance += amountToAdd;
-        this._context.Customers.Update(theCustomer);
-        this._context.SaveChanges();
+        _context.Customers.Update(theCustomer);
+        _context.SaveChanges();
         return true;
     }
-    
     public bool DecreaseBalance(int id, int amountToRemove)
     {
-        var theCustomer = this._context.Customers.Find(id);
+        var theCustomer = _context.Customers.Find(id);
         if (theCustomer is null) return false;
         theCustomer.Balance -= amountToRemove;
-        this._context.Customers.Update(theCustomer);
-        this._context.SaveChanges();
+        _context.Customers.Update(theCustomer);
+        _context.SaveChanges();
         return true;
     }
-
     public void Delete(int id)
     {
-        this._context.Customers.Where(customer => customer.CustomerId == id)
-                               .ExecuteDelete();
+        _context.Customers.Where(customer => customer.CustomerId == id).ExecuteDelete();
     }
-    
 }
