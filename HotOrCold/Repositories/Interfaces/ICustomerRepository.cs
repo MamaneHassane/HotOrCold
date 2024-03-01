@@ -8,6 +8,6 @@ public interface ICustomerRepository
     IEnumerable<Customer> GetAll();
     Customer? Get(int id);
     void Update(Customer updatedCustomer);
-    bool IncreaseBalance(int id, int amountToAdd);
-    bool DecreaseBalance(int id, int amountToRemove);
+    bool IncreaseBalance(int id, double amountToAdd);
+    bool DecreaseBalance(int id, double amountToRemove);
 }

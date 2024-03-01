@@ -5,39 +5,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Repositories;
 
-public class DrinkRepository : IDrinkRepository
+public class DrinkRepository(ApplicationDbContext context) : IDrinkRepository
 {
-    private readonly ApplicationDbContext _context;
-    public DrinkRepository(ApplicationDbContext context)
+    private readonly ApplicationDbContext _context = context;
+
+    public async Task<Drink> Create(Drink drink)
     {
-        this._context = context;
+        await _context.AddAsync(drink);
+        await _context.SaveChangesAsync();
+        return drink;
     }
 
-    public void Create(Drink drink)
+    public async Task<List<Drink>> GetAll()
     {
-        this._context.Add((drink));
-        this._context.SaveChanges();
+        var theDrinks = await _context.Drinks.ToListAsync();
+        return theDrinks;
     }
 
-    public IEnumerable<Drink> GetAll()
+    public async Task<Drink?> Get(int id)
     {
-        return this._context.Drinks.AsNoTracking().ToList();
+        Drink? theDrink = await _context.Drinks.FindAsync(id);
+        return theDrink;
     }
 
-    public Drink? Get(int id)
+    public async Task<Drink?> Update(Drink updatedDrink)
     {
-        return this._context.Drinks.Find(id);
+        _context.Drinks.Update(updatedDrink);
+        await _context.SaveChangesAsync();
+        return updatedDrink;
     }
 
-    public void Update(Drink updatedDrink)
+    public async Task<bool> Delete(int id)
     {
-        this._context.Update(updatedDrink);
-        this._context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        this._context.Drinks.Where(drink => drink.DrinkId == id)
-                            .ExecuteDelete();
+        await _context.Drinks.Where(drink => drink.DrinkId == id)
+                             .ExecuteDeleteAsync();
+        return true;
     }
 }

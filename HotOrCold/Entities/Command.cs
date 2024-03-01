@@ -1,13 +1,18 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using HotOrCold.Enumerations;
 
 namespace HotOrCold.Entities;
 
 public class Command
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CommandId { get; set; }
-    // Une Command correspond à un seul Customer
+    // Une commande correspond à un seul Customer
     public required Customer Customer { get; set; }
-
+    // Une commande à une date
+    public required DateOnly CommandDate { get; set; }
     // Une commande à un status
     public CommandStatus CommandStatus { get; set; } 
     // Une Command contient une liste de DrinkCopy

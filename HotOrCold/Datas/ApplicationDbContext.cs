@@ -1,4 +1,5 @@
 using HotOrCold.Entities;
+using HotOrCold.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Datas;
@@ -17,4 +18,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Cart> Carts => Set<Cart>();
     // Les commandes, un Customer donne lieu à plusieurs commandes, un commande vient d'un seul Customer
     public DbSet<Command> Commands => Set<Command>();
+
+    // Création de model
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        
+    }
 }

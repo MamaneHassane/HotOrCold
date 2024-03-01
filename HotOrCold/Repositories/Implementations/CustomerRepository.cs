@@ -27,7 +27,7 @@ public class CustomerRepository(ApplicationDbContext context) : ICustomerReposit
         _context.Update(updatedCustomer);
         _context.SaveChanges();
     }
-    public bool IncreaseBalance(int id, int amountToAdd)
+    public bool IncreaseBalance(int id, double amountToAdd)
     {
         var theCustomer = _context.Customers.Find(id);
         if (theCustomer is null) return false;
@@ -36,7 +36,7 @@ public class CustomerRepository(ApplicationDbContext context) : ICustomerReposit
         _context.SaveChanges();
         return true;
     }
-    public bool DecreaseBalance(int id, int amountToRemove)
+    public bool DecreaseBalance(int id, double amountToRemove)
     {
         var theCustomer = _context.Customers.Find(id);
         if (theCustomer is null) return false;

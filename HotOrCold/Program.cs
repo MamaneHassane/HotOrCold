@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using HotOrCold.Datas;
 using HotOrCold.Repositories;
 using HotOrCold.Repositories.Interfaces;
@@ -9,8 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 // Ajouter les contrôleurs
-builder.Services.AddControllers();
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    // Ajouter un convertisseur d'énumérations
+    var enumConverter = new JsonStringEnumConverter();
+    options.JsonSerializerOptions.Converters.Add(enumConverter);
+    // Ignorer les champs non renseignés
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
 // Ajouter Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

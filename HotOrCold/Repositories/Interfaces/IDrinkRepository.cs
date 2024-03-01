@@ -4,9 +4,9 @@ namespace HotOrCold.Repositories.Interfaces;
 
 public interface IDrinkRepository
 {
-    void Create(Drink drink);
-    IEnumerable<Drink> GetAll();
-    Drink? Get(int id);
-    void Update(Drink updatedDrink);
-    void Delete(int id);
+    Task<Drink> Create(Drink drink);
+    Task<List<Drink>> GetAll();
+    Task<Drink?> Get(int id);
+    Task<Drink?> Update(Drink updatedDrink);
+    Task<bool> Delete(int id);
 }

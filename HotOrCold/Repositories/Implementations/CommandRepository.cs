@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Repositories;
 
-public class CommandRepository(ApplicationDbContext context, ICartRepository cartRepository) : ICommandRepository
+public class CommandRepository(ApplicationDbContext context, ICartRepository cartRepository, ICustomerRepository customerRepository) : ICommandRepository
 {
     private readonly ApplicationDbContext _context = context;
     private readonly ICartRepository _cartRepository = cartRepository;
-
+    private readonly ICustomerRepository _customerRepository = customerRepository;
     public Command Create(Command command)
     {
         _context.Commands.Add(command);
@@ -26,7 +26,8 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         var theCommand = new Command
         {
             Customer = theCustomer,
-            DrinkCopies = createCommandDto.DrinkCopies
+            DrinkCopies = createCommandDto.DrinkCopies,
+            CommandDate = DateOnly.FromDateTime(DateTime.Today)
         };
         _context.Commands.Add(theCommand);
         _context.SaveChanges();
@@ -38,7 +39,9 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         if(theCustomer is null) return null;
         IEnumerable<Command> theCommands = _context.Commands.AsNoTracking()
                                                             .Where(command => command.Customer.CustomerId == theCustomer.CustomerId)
-                                                            .Where(command => command.CommandStatus.Equals(CommandStatus.OnGoing) );
+                                                            .Where(command => command.CommandStatus.Equals(CommandStatus.OnGoing) )
+                                                            .OrderBy(command => command.CommandDate)
+                                                            .Take(20);
         return theCommands;
     }
     public IEnumerable<Command>? GetHistorizedCommandByCustomerId(int customerId) 
@@ -47,19 +50,25 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         if(theCustomer is null) return null;
         IEnumerable<Command> theCommands = _context.Commands.AsNoTracking()
                                                             .Where(command => command.Customer.CustomerId == theCustomer.CustomerId)
-                                                            .Where(command => command.CommandStatus.Equals(CommandStatus.Done) );
+                                                            .Where(command => command.CommandStatus.Equals(CommandStatus.Done) )
+                                                            .OrderBy(command => command.CommandDate)
+                                                            .Take(20);
         return theCommands;
     }
 
     public bool DoCommandAndClearCart(DoCommandAndClearCartDto doCommandAndClearCartDto)
     {
         var theCustomer = _context.Customers.Find(doCommandAndClearCartDto.CustomerId);
-        if (theCustomer is null) return false;       
+        if (theCustomer is null) return false;    
         var theCommand = Create
         (
             new CreateCommandDto(doCommandAndClearCartDto.DrinkCopies ,doCommandAndClearCartDto.CustomerId)                 
         );
         if (theCommand is null) return false;
+        
+        // Le client paye
+        _customerRepository.DecreaseBalance(theCustomer.CustomerId,theCommand.Price);
+
         _cartRepository.ClearCart(doCommandAndClearCartDto.CartId);
         return true;
     }

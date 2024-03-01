@@ -1,7 +1,8 @@
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace HotOrCold.Enumerations;
-
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum DrinkType
 {
     [EnumMember(Value = "BlackCoffee")]
@@ -18,4 +19,6 @@ public enum DrinkType
     CoffeeMilk,
     [EnumMember(Value = "MachaLatte")]
     MachaLatte,
+    [EnumMember(Value = "Unclassified")]
+    Unclassified,
 }

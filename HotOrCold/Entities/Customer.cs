@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotOrCold.Entities;
 
 public class Customer
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CustomerId { get; set; }
 
     [Required] [StringLength(100, ErrorMessage = "Essayer s'il vous plaît de raccourcir le nom")]
