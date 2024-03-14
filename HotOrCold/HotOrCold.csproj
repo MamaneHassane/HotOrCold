@@ -23,7 +23,6 @@
 
     <ItemGroup>
       <Folder Include="Dtos\Methods\" />
-      <Folder Include="Utilities\" />
     </ItemGroup>
 
 </Project>

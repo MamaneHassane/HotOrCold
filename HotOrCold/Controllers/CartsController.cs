@@ -19,4 +19,18 @@ public class CartsController(ICartRepository cartRepository) : ControllerBase
         await _cartRepository.AddDrinkCopyToCart(addDrinkCopyDto);
         return Ok("Ajouté avec succèes");
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Cart>> GetCartById(int id)
+    {
+        try
+        {
+            return Ok(await _cartRepository.Get(id));
+        }
+        catch (Exception exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite dans la recherche de panier");
+        }
+        
+    }
 }
