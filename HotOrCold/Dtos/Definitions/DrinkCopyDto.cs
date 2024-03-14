@@ -1,7 +1,7 @@
-namespace HotOrCold.Dtos;
+namespace HotOrCold.Dtos.Definitions;
 
 public record AddDrinkCopyDto(
-    int CartId, 
+    int CartId,
     int DrinkId, 
     int QuantityInLiter
 );

@@ -1,13 +1,15 @@
 using HotOrCold.Entities;
 using HotOrCold.Dtos;
+using HotOrCold.Dtos.Definitions;
 
 namespace HotOrCold.Repositories.Interfaces;
 
 public interface ICartRepository
 {
-    void Create(Cart cart);
-    Cart? Get(int id);
-    bool ClearCart(int cartId);
-    bool AddDrinkCopy(AddDrinkCopyDto addDrinkCopyDto);
-    bool RemoveDrinkCopy(int cartId, int drinkId);
+    Task<Cart> Create(Cart cart);
+    Task<Cart?> Get(int id);
+    Task<bool> ClearCart(int cartId);
+    Task<bool> AddDrinkCopyToCart(AddDrinkCopyDto addDrinkCopyDto);
+    Task<bool> RemoveDrinkCopy(int cartId, int drinkId);
+    Task<bool> AddManyDrinkCopies(AddManyDrinkCopiesDto addManyDrinkCopiesDto);
 }

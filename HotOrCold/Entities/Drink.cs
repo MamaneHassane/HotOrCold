@@ -14,9 +14,8 @@ public class Drink
     // Le type de la boisson
     [Range(0,6)]
     public int Drinktype { get; set; }
-    
     // Le nom de la boisson
-    public string DrinkName
+    public string DrinkName 
     {
         get 
         {
@@ -42,9 +41,9 @@ public class Drink
     public string? ImageUrl { get; set; }
     
     // Propriété de navigation OneToMany : Un Drink possède plusieurs DrinkCopy
-    public ICollection<DrinkCopy>? DrinkCopies { get; set; }
+    public ICollection<DrinkCopy>? DrinkCopies { get; set; } = new List<DrinkCopy>();
     
     // Propriété de navigation ManyToMany : Un Drink possède plusieurs Category
-    public ICollection<Category>? Categories { get; set; }
-    
+    public ICollection<Category>? Categories { get; set; } = new List<Category>();
+
 }

@@ -10,7 +10,8 @@ public class Command
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CommandId { get; set; }
     // Une commande correspond à un seul Customer
-    public required Customer Customer { get; set; }
+    [ForeignKey("customer_id")]
+    public int CustomerId { get; set; }
     // Une commande à une date
     public required DateOnly CommandDate { get; set; }
     // Une commande à un status

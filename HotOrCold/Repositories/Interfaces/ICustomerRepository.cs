@@ -1,13 +1,16 @@
+using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 
 namespace HotOrCold.Repositories.Interfaces;
 
 public interface ICustomerRepository
 {
-    void Create(Customer customer);
-    IEnumerable<Customer> GetAll();
-    Customer? Get(int id);
-    void Update(Customer updatedCustomer);
-    bool IncreaseBalance(int id, double amountToAdd);
-    bool DecreaseBalance(int id, double amountToRemove);
+    Task<Customer> Register(Customer customer);
+    Task<Customer?> Authenticate(CustomerAuthenticationDto customer);
+    Task<IEnumerable<Customer>> GetAll();
+    Task<Customer?> Get(int id);
+    Task<Customer?> Update(Customer updatedCustomer);
+    Task<bool> Delete(int id);
+    Task<bool> IncreaseBalance(int id, double amountToAdd);
+    Task<bool> DecreaseBalance(int id, double amountToRemove);
 }

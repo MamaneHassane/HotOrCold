@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotOrCold.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240301212819_m11")]
-    partial class m11
+    [Migration("20240309123613_m4")]
+    partial class m4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,12 +150,11 @@ namespace HotOrCold.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DrinkId"));
 
+                    b.Property<int>("Drinktype")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Name")
-                        .HasMaxLength(11)
-                        .HasColumnType("int");
 
                     b.Property<double>("PricePerLiter")
                         .HasColumnType("float");
@@ -179,8 +178,11 @@ namespace HotOrCold.Migrations
                     b.Property<int?>("CommandId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DrinkId")
+                    b.Property<int>("DrinkId")
                         .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
                     b.Property<double>("QuantityInLiter")
                         .HasColumnType("float");
@@ -213,29 +215,25 @@ namespace HotOrCold.Migrations
 
             modelBuilder.Entity("HotOrCold.Entities.Cart", b =>
                 {
-                    b.HasOne("HotOrCold.Entities.Customer", "Customer")
+                    b.HasOne("HotOrCold.Entities.Customer", null)
                         .WithOne("Cart")
                         .HasForeignKey("HotOrCold.Entities.Cart", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("HotOrCold.Entities.Command", b =>
                 {
-                    b.HasOne("HotOrCold.Entities.Customer", "Customer")
+                    b.HasOne("HotOrCold.Entities.Customer", null)
                         .WithMany("Commands")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("HotOrCold.Entities.DrinkCopy", b =>
                 {
-                    b.HasOne("HotOrCold.Entities.Cart", "Cart")
+                    b.HasOne("HotOrCold.Entities.Cart", null)
                         .WithMany("DrinkCopies")
                         .HasForeignKey("CartId");
 
@@ -243,13 +241,11 @@ namespace HotOrCold.Migrations
                         .WithMany("DrinkCopies")
                         .HasForeignKey("CommandId");
 
-                    b.HasOne("HotOrCold.Entities.Drink", "Drink")
+                    b.HasOne("HotOrCold.Entities.Drink", null)
                         .WithMany("DrinkCopies")
-                        .HasForeignKey("DrinkId");
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Drink");
+                        .HasForeignKey("DrinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HotOrCold.Entities.Cart", b =>

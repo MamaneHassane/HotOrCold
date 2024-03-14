@@ -49,9 +49,9 @@ namespace HotOrCold.Migrations
                 {
                     DrinkId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<int>(type: "int", maxLength: 11, nullable: false),
+                    Drinktype = table.Column<int>(type: "int", nullable: false),
                     PricePerLiter = table.Column<double>(type: "float", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -128,10 +128,10 @@ namespace HotOrCold.Migrations
                 {
                     DrinkCopyId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DrinkId = table.Column<int>(type: "int", nullable: false),
                     QuantityInLiter = table.Column<double>(type: "float", nullable: false),
                     CartId = table.Column<int>(type: "int", nullable: false),
-                    CommandId = table.Column<int>(type: "int", nullable: true)
+                    CommandId = table.Column<int>(type: "int", nullable: true),
+                    DrinkId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -148,11 +148,10 @@ namespace HotOrCold.Migrations
                         principalTable: "Commands",
                         principalColumn: "CommandId");
                     table.ForeignKey(
-                        name: "FK_DrinkCopies_Drinks_DrinkId",
-                        column: x => x.DrinkId,
+                        name: "FK_DrinkCopies_Drinks_DrinkId1",
+                        column: x => x.DrinkId1,
                         principalTable: "Drinks",
-                        principalColumn: "DrinkId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DrinkId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -182,9 +181,9 @@ namespace HotOrCold.Migrations
                 column: "CommandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DrinkCopies_DrinkId",
+                name: "IX_DrinkCopies_DrinkId1",
                 table: "DrinkCopies",
-                column: "DrinkId");
+                column: "DrinkId1");
         }
 
         /// <inheritdoc />

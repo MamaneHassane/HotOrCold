@@ -3,7 +3,7 @@ using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotOrCold.Repositories;
+namespace HotOrCold.Repositories.Implementations;
 
 public class DrinkRepository(ApplicationDbContext context) : IDrinkRepository
 {
@@ -18,13 +18,13 @@ public class DrinkRepository(ApplicationDbContext context) : IDrinkRepository
 
     public async Task<List<Drink>> GetAll()
     {
-        var theDrinks = await _context.Drinks.ToListAsync();
+        var theDrinks = await _context.Drinks.Include(d=>d.DrinkCopies).ToListAsync();
         return theDrinks;
     }
 
     public async Task<Drink?> Get(int id)
     {
-        Drink? theDrink = await _context.Drinks.FindAsync(id);
+        var theDrink = await _context.Drinks.FindAsync(id);
         return theDrink;
     }
 
@@ -37,8 +37,7 @@ public class DrinkRepository(ApplicationDbContext context) : IDrinkRepository
 
     public async Task<bool> Delete(int id)
     {
-        await _context.Drinks.Where(drink => drink.DrinkId == id)
-                             .ExecuteDeleteAsync();
+        await _context.Drinks.Where(drink => drink.DrinkId == id).ExecuteDeleteAsync();
         return true;
     }
 }

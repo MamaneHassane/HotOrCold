@@ -1,52 +1,74 @@
 using HotOrCold.Datas;
+using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotOrCold.Repositories;
+namespace HotOrCold.Repositories.Implementations;
 
-public class CustomerRepository(ApplicationDbContext context) : ICustomerRepository
+public class CustomerRepository(ApplicationDbContext context, ICartRepository cartRepository) : ICustomerRepository
 {
     private readonly ApplicationDbContext _context = context;
+    private readonly ICartRepository _cartRepository = cartRepository;
 
-    public void Create(Customer customer)
+    public async Task<Customer> Register(Customer customer)
     {
-        _context.Add(customer);
-        _context.SaveChanges();
+        // Faire un AddAsync pour générer l'identifiant du customer
+        await _context.Customers.AddAsync(customer);
+        // Lui créér un Cart
+        var newCartOfCustomer = new Cart();
+        // L'associer avec son identifiant
+        newCartOfCustomer.CustomerId = customer.CustomerId;
+        // Sauvegarder son cart
+        await _cartRepository.Create(newCartOfCustomer);
+        customer.CartId = newCartOfCustomer.CartId;
+        await _context.SaveChangesAsync();
+        return customer;
     }
-    public IEnumerable<Customer> GetAll()
+    public async Task<Customer?> Authenticate(CustomerAuthenticationDto customerAuthenticationDto)
     {
-        return [.. _context.Customers.AsNoTracking()];
+        var customerFound = await _context.Customers.Where(customer =>
+                customer.Username == customerAuthenticationDto.Username
+                &&
+                customer.Password == customerAuthenticationDto.Password
+        ).FirstOrDefaultAsync();
+        return customerFound;
     }
-    public Customer? Get(int id)
+    public async Task<IEnumerable<Customer>> GetAll()
     {
-        return _context.Customers.Find(id);
+        return await _context.Customers.ToListAsync();
     }
-    public void Update(Customer updatedCustomer)
+    public async Task<Customer?> Get(int id)
     {
-        _context.Update(updatedCustomer);
-        _context.SaveChanges();
+        return await _context.Customers.FindAsync(id);
     }
-    public bool IncreaseBalance(int id, double amountToAdd)
+    public async Task<Customer?> Update(Customer updatedCustomer)
     {
-        var theCustomer = _context.Customers.Find(id);
+        _context.Customers.Update(updatedCustomer);
+        await _context.SaveChangesAsync();
+        return updatedCustomer;
+    }
+    public async Task<bool> IncreaseBalance(int id, double amountToAdd)
+    {
+        var theCustomer = await _context.Customers.FindAsync(id);
         if (theCustomer is null) return false;
         theCustomer.Balance += amountToAdd;
         _context.Customers.Update(theCustomer);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
-    public bool DecreaseBalance(int id, double amountToRemove)
+    public async Task<bool> DecreaseBalance(int id, double amountToRemove)
     {
-        var theCustomer = _context.Customers.Find(id);
+        var theCustomer = await _context.Customers.FindAsync(id);
         if (theCustomer is null) return false;
         theCustomer.Balance -= amountToRemove;
         _context.Customers.Update(theCustomer);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
-    public void Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        _context.Customers.Where(customer => customer.CustomerId == id).ExecuteDelete();
+        await _context.Customers.Where(customer => customer.CustomerId == id).ExecuteDeleteAsync();
+        return true;
     }
 }

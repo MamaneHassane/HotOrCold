@@ -1,4 +1,4 @@
-namespace HotOrCold.Dtos;
+namespace HotOrCold.Dtos.Definitions;
 
 public record CreateCartDto(
     // Pas besoin pour l'instant

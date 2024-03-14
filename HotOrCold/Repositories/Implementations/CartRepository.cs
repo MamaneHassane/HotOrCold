@@ -1,9 +1,10 @@
 using HotOrCold.Datas;
+using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
-using HotOrCold.Dtos;
 using HotOrCold.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace HotOrCold.Repositories;
+namespace HotOrCold.Repositories.Implementations;
 
 public class CartRepository : ICartRepository
 {
@@ -14,71 +15,76 @@ public class CartRepository : ICartRepository
         _context = context;
     }
 
-    public void Create(Cart cart)
+    public async Task<Cart> Create(Cart cart)
     {
-        _context.Carts.Add(cart);
-        _context.SaveChanges();
+        await _context.Carts.AddAsync(cart);
+        await _context.SaveChangesAsync();
+        return cart;
     }
 
-    public Cart? Get(int id)
+    public async Task<Cart?>  Get(int id)
     {
-        return _context.Carts.Find((id));
+        return await _context.Carts.FindAsync((id));
     }
     
-    public bool ClearCart(int cartId)
+    public async Task<bool> ClearCart(int cartId)
     {
-        var theCart = _context.Carts.Find(cartId);
+        var theCart = await _context.Carts.FindAsync(cartId);
         if (theCart is null) return false;
         theCart.DrinkCopies.Clear();
         _context.Carts.Update(theCart);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    public bool AddDrinkCopy(AddDrinkCopyDto addDrinkCopyDto)
+    public async Task<bool> AddDrinkCopyToCart(AddDrinkCopyDto addDrinkCopyDto)
     {
-        var theDrink = _context.Drinks.Find(addDrinkCopyDto.DrinkId);
-        var theCart = _context.Carts.Find(addDrinkCopyDto.CartId);
+        var theDrink = await _context.Drinks.FindAsync((addDrinkCopyDto.DrinkId));
+        var theCart = await _context.Carts.FindAsync(addDrinkCopyDto.CartId);
         if (theDrink is null || theCart is null) return false;
         var drinkCopy = new DrinkCopy
         {
-            Drink = theDrink,
+            // S'assurer que le Drink existe selon l'id
+            DrinkId = theDrink.DrinkId,
+            Price = theDrink.PricePerLiter * addDrinkCopyDto.QuantityInLiter,
             QuantityInLiter = addDrinkCopyDto.QuantityInLiter,
-            Cart = theCart
+            CartId = theCart.CartId
         };
         theCart.DrinkCopies.Add(drinkCopy);
         _context.Carts.Update(theCart);
-        _context.DrinkCopies.Add((drinkCopy));
-        _context.SaveChanges();
+        await _context.DrinkCopies.AddAsync((drinkCopy));
+        await _context.SaveChangesAsync();
         return true;
     }
-    public bool AddManyDrinkCopies(AddManyDrinkCopiesDto addManyDrinkCopiesDto)
+    public async Task<bool> AddManyDrinkCopies(AddManyDrinkCopiesDto addManyDrinkCopiesDto)
     {
-        var theCart = _context.Carts.Find(addManyDrinkCopiesDto.CartId);
+        var theCart = await _context.Carts.FindAsync(addManyDrinkCopiesDto.CartId);
         if (theCart is null) return false;
         foreach (var addDrinkCopyDto in addManyDrinkCopiesDto.AddDrinkCopyDtoCollection)
         {
-            var theDrink = _context.Drinks.Find(addDrinkCopyDto.DrinkId);
+            // S'assurer que le Drink existe selon l'id
+            var theDrink = await _context.Drinks.FindAsync(addDrinkCopyDto.DrinkId);
             if (theDrink is not null)
             {
                 var drinkCopy = new DrinkCopy
                 {
-                    Drink = theDrink,
+                    DrinkId = theDrink.DrinkId, 
+                    Price = theDrink.PricePerLiter*addDrinkCopyDto.QuantityInLiter,
                     QuantityInLiter = addDrinkCopyDto.QuantityInLiter,
-                    Cart = theCart
+                    CartId = theCart.CartId
                 };
                 theCart.DrinkCopies.Add(drinkCopy);
                 _context.Carts.Update(theCart);
                 _context.DrinkCopies.Add((drinkCopy));
             }
         }
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
-    public bool RemoveDrinkCopy(int cartId, int drinkCopyId)
+    public async Task<bool> RemoveDrinkCopy(int cartId, int drinkCopyId)
     {
-        var theDrinkCopy = _context.DrinkCopies.Find(drinkCopyId);
-        var theCart = _context.Carts.Find(cartId);
+        var theDrinkCopy = await _context.DrinkCopies.FindAsync(drinkCopyId);
+        var theCart = await _context.Carts.FindAsync(cartId);
         if (theDrinkCopy is null || theCart is null) return false;
         theCart.DrinkCopies.Remove(theDrinkCopy);
         _context.Carts.Update(theCart);

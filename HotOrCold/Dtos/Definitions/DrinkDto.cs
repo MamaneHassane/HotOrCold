@@ -1,4 +1,4 @@
-namespace HotOrCold.Dtos;
+namespace HotOrCold.Dtos.Definitions;
 
 public record CreateDrinkDto (
     // Pas besoin pour l'instant

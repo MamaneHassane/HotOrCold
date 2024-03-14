@@ -1,12 +1,11 @@
 using HotOrCold.Datas;
-using HotOrCold.Dtos;
+using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Enumerations;
 using HotOrCold.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotOrCold.Repositories;
+namespace HotOrCold.Repositories.Implementations;
 
 public class CommandRepository(ApplicationDbContext context, ICartRepository cartRepository, ICustomerRepository customerRepository) : ICommandRepository
 {
@@ -25,7 +24,7 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         if (theCustomer is null) return null;
         var theCommand = new Command
         {
-            Customer = theCustomer,
+            CustomerId = theCustomer.CustomerId,
             DrinkCopies = createCommandDto.DrinkCopies,
             CommandDate = DateOnly.FromDateTime(DateTime.Today)
         };
@@ -38,7 +37,7 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         var theCustomer = _context.Customers.Find(customerId);
         if(theCustomer is null) return null;
         IEnumerable<Command> theCommands = _context.Commands.AsNoTracking()
-                                                            .Where(command => command.Customer.CustomerId == theCustomer.CustomerId)
+                                                            .Where(command => command.CustomerId == theCustomer.CustomerId)
                                                             .Where(command => command.CommandStatus.Equals(CommandStatus.OnGoing) )
                                                             .OrderBy(command => command.CommandDate)
                                                             .Take(20);
@@ -49,7 +48,7 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         var theCustomer = _context.Customers.Find(customerId);
         if(theCustomer is null) return null;
         IEnumerable<Command> theCommands = _context.Commands.AsNoTracking()
-                                                            .Where(command => command.Customer.CustomerId == theCustomer.CustomerId)
+                                                            .Where(command => command.CustomerId == theCustomer.CustomerId)
                                                             .Where(command => command.CommandStatus.Equals(CommandStatus.Done) )
                                                             .OrderBy(command => command.CommandDate)
                                                             .Take(20);

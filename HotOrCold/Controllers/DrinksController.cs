@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotOrCold.Controllers;
 
-[Route("/api/[controller]")]
 [ApiController]
+[Route("/api/[controller]")]
 public class DrinksController(IDrinkRepository drinkRepository) : ControllerBase
 {
     private readonly IDrinkRepository _drinkRepository = drinkRepository;

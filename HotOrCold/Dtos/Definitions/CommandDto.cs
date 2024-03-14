@@ -1,5 +1,6 @@
 using HotOrCold.Entities;
-namespace HotOrCold.Dtos;
+
+namespace HotOrCold.Dtos.Definitions;
 
 public record CreateCommandDto
 {

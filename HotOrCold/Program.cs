@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using HotOrCold.Datas;
 using HotOrCold.Repositories;
+using HotOrCold.Repositories.Implementations;
 using HotOrCold.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     // Ignorer les champs non renseignés
     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
-// Ajouter Swagger
+// Ajouter endpoinexplorer et Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -31,7 +32,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICommandRepository, CommandRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
-
+builder.Services.AddScoped<IDrinkCopyRepository, DrinkCopyRepository>();
 // Construire l'application
 var app = builder.Build();
 
