@@ -24,7 +24,7 @@ public class CartRepository : ICartRepository
 
     public async Task<Cart?>  Get(int id)
     {
-        return await _context.Carts.FindAsync((id));
+        return await _context.Carts.Where(cart => cart.CartId == id).Include(cart => cart.DrinkCopies).FirstOrDefaultAsync();
     }
     
     public async Task<bool> ClearCart(int cartId)
@@ -81,15 +81,15 @@ public class CartRepository : ICartRepository
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task<bool> RemoveDrinkCopy(int cartId, int drinkCopyId)
+    public async Task<bool> RemoveDrinkCopy(RemoveDrinkCopyFromCartDto removeDrinkCopyFromCartDto)
     {
-        var theDrinkCopy = await _context.DrinkCopies.FindAsync(drinkCopyId);
-        var theCart = await _context.Carts.FindAsync(cartId);
+        var theDrinkCopy = await _context.DrinkCopies.FindAsync(removeDrinkCopyFromCartDto.DrinkCopyId);
+        var theCart = await _context.Carts.FindAsync(removeDrinkCopyFromCartDto.CartId);
         if (theDrinkCopy is null || theCart is null) return false;
         theCart.DrinkCopies.Remove(theDrinkCopy);
         _context.Carts.Update(theCart);
-        _context.DrinkCopies.Remove((theDrinkCopy));
-        _context.SaveChanges();
+        _context.DrinkCopies.Remove(theDrinkCopy);
+        await _context.SaveChangesAsync();
         return true;
     }
 }

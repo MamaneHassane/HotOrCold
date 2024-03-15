@@ -1,5 +1,4 @@
 using HotOrCold.Entities;
-using HotOrCold.Dtos;
 using HotOrCold.Dtos.Definitions;
 
 namespace HotOrCold.Repositories.Interfaces;
@@ -10,6 +9,6 @@ public interface ICartRepository
     Task<Cart?> Get(int id);
     Task<bool> ClearCart(int cartId);
     Task<bool> AddDrinkCopyToCart(AddDrinkCopyDto addDrinkCopyDto);
-    Task<bool> RemoveDrinkCopy(int cartId, int drinkId);
+    Task<bool> RemoveDrinkCopy(RemoveDrinkCopyFromCartDto removeDrinkCopyFromCartDto);
     Task<bool> AddManyDrinkCopies(AddManyDrinkCopiesDto addManyDrinkCopiesDto);
 }

@@ -10,12 +10,7 @@ public class Cart
      [Key]
      [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
      public int CartId { get; set; }
-     // Un Cart appartient à un seul Customer
-     // Clé étrangère du Customer
-     [ForeignKey("customer_id")]
-     public int CustomerId { get; set; }
      // Un Cart contient plusieurs DrinkCopy
      // Propriéte de navigation OneToMany
-     public ICollection<DrinkCopy>? DrinkCopies { get; } = new List<DrinkCopy>();
-
+     public ICollection<DrinkCopy>? DrinkCopies { get; set; } = new List<DrinkCopy>();
 }

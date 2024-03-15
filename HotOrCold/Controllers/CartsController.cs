@@ -9,8 +9,23 @@ namespace HotOrCold.Controllers;
 public class CartsController(ICartRepository cartRepository) : ControllerBase
 {
     private readonly ICartRepository _cartRepository = cartRepository;
-    [HttpPost]
-    public async Task<ActionResult<Cart>> AddDrinkCopyToCart([FromBody] AddDrinkCopyDto addDrinkCopyDto)
+    
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Cart?>> GetCartById(int id)
+    {
+        try
+        {
+            return Ok(await _cartRepository.Get(id));
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite dans la recherche de panier");
+        }
+        
+    }
+    
+    [HttpPost("addDrinkCopy")]
+    public async Task<ActionResult<Cart?>> AddDrinkCopyToCart([FromBody] AddDrinkCopyDto addDrinkCopyDto)
     {
         if (!ModelState.IsValid)
         {
@@ -19,18 +34,36 @@ public class CartsController(ICartRepository cartRepository) : ControllerBase
         await _cartRepository.AddDrinkCopyToCart(addDrinkCopyDto);
         return Ok("Ajouté avec succèes");
     }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Cart>> GetCartById(int id)
+    
+    [HttpPost("addManyDrinkCopies")]
+    public async Task<ActionResult<Cart?>> AddManyDrinkCopiesToCart([FromBody] AddManyDrinkCopiesDto addManyDrinkCopiesDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(addManyDrinkCopiesDto);
+        }
         try
         {
-            return Ok(await _cartRepository.Get(id));
+            
+            await _cartRepository.AddManyDrinkCopies(addManyDrinkCopiesDto);
+            return Ok("Ajoutées avec succès");
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite dans la recherche de panier");
         }
-        
+    }
+
+    [HttpPost("removeDrinkCopyFromCart")]
+    public async Task<ActionResult<Cart?>> RemoveDrinkCopyCart([FromBody] RemoveDrinkCopyFromCartDto removeDrinkCopyFromCartDto)
+    {
+        try
+        {
+            return Ok(await _cartRepository.RemoveDrinkCopy(removeDrinkCopyFromCartDto));
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite lors de la suppression de la boisson du panier");
+        }
     }
 }

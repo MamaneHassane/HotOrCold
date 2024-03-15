@@ -1,7 +1,6 @@
 using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotOrCold.Controllers;
@@ -28,6 +27,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
         }
         catch (Exception exception)
         {
+            Console.WriteLine(exception);
             Console.WriteLine("Erreur lors de la création de compte utilisateur");
             return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite lors de la création du client");
         }
@@ -45,7 +45,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
         return Ok(customerFound);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<Customer>> ConsultAccount(int id)
     {
         var customer = await _customerRepository.Get(id);

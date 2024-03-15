@@ -12,13 +12,8 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
     private readonly ApplicationDbContext _context = context;
     private readonly ICartRepository _cartRepository = cartRepository;
     private readonly ICustomerRepository _customerRepository = customerRepository;
-    public Command Create(Command command)
-    {
-        _context.Commands.Add(command);
-        _context.SaveChanges();
-        return command;
-    }
-    public Command? Create(CreateCommandDto createCommandDto)
+
+    private Command? Create(CreateCommandDto createCommandDto)
     {
         var theCustomer = _context.Customers.Find(createCommandDto.CustomerId);
         if (theCustomer is null) return null;
@@ -32,48 +27,100 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         _context.SaveChanges();
         return theCommand;
     }
-    public IEnumerable<Command>? GetActivesCommandByCustomerId(int customerId) 
+    
+    public async Task<IEnumerable<Command?>?> GetAllCommands()
     {
-        var theCustomer = _context.Customers.Find(customerId);
-        if(theCustomer is null) return null;
-        IEnumerable<Command> theCommands = _context.Commands.AsNoTracking()
-                                                            .Where(command => command.CustomerId == theCustomer.CustomerId)
-                                                            .Where(command => command.CommandStatus.Equals(CommandStatus.OnGoing) )
-                                                            .OrderBy(command => command.CommandDate)
-                                                            .Take(20);
+        return await _context.Commands.ToListAsync();
+    }
+    
+    public async Task<Command?> Create(Command command)
+    {
+        await _context.Commands.AddAsync(command);
+        await _context.SaveChangesAsync();
+        return command;
+    }
+    
+    public async Task<Command?> Create(ICollection<DrinkCopy> drinkCopies, int customerId)
+    {
+        var command = new Command
+        {
+            CustomerId = customerId,
+            CommandDate = DateOnly.FromDateTime(DateTime.Today),
+            CommandStatus = CommandStatus.OnGoing,
+            DrinkCopies = drinkCopies,
+        };
+        await _context.Commands.AddAsync(command);
+        return command;
+    }
+
+    public async Task<Command?> Get(int id)
+    {
+        return await _context.Commands.FindAsync(id);
+    }
+    
+    public async Task<IEnumerable<Command?>> GetActivesCommandByCustomerId(int customerId) 
+    {
+        var theCustomer = await _context.Customers.FindAsync(customerId);
+        if(theCustomer is null) return new List<Command>();
+        IEnumerable<Command> theCommands = await _context.Commands
+            .AsNoTracking()
+            .Where(command => command.CustomerId == theCustomer.CustomerId)
+            .Where(command => command.CommandStatus.Equals(CommandStatus.OnGoing))
+            .OrderByDescending(command => command.CommandDate)
+            .ToListAsync();
         return theCommands;
     }
-    public IEnumerable<Command>? GetHistorizedCommandByCustomerId(int customerId) 
+    
+    public async Task<IEnumerable<Command?>> GetHistorizedCommandByCustomerId(int customerId) 
     {
-        var theCustomer = _context.Customers.Find(customerId);
-        if(theCustomer is null) return null;
+        var theCustomer = await _context.Customers.FindAsync(customerId);
+        if(theCustomer is null) return new List<Command>();
         IEnumerable<Command> theCommands = _context.Commands.AsNoTracking()
                                                             .Where(command => command.CustomerId == theCustomer.CustomerId)
                                                             .Where(command => command.CommandStatus.Equals(CommandStatus.Done) )
-                                                            .OrderBy(command => command.CommandDate)
+                                                            .OrderByDescending(command => command.CommandDate)
                                                             .Take(20);
         return theCommands;
     }
 
-    public bool DoCommandAndClearCart(DoCommandAndClearCartDto doCommandAndClearCartDto)
+    public async Task<bool> DoCommandAndClearCart(DoCommandAndClearCartDto doCommandAndClearCartDto)
     {
-        var theCustomer = _context.Customers.Find(doCommandAndClearCartDto.CustomerId);
+        var theCustomer = await _context.Customers.FindAsync(doCommandAndClearCartDto.CustomerId);
         if (theCustomer is null) return false;    
         var theCommand = Create
         (
             new CreateCommandDto(doCommandAndClearCartDto.DrinkCopies ,doCommandAndClearCartDto.CustomerId)                 
         );
-        if (theCommand is null) return false;
-        
+        if (theCommand is null || theCommand.Price>theCustomer.Balance) return false;
         // Le client paye
-        _customerRepository.DecreaseBalance(theCustomer.CustomerId,theCommand.Price);
-
-        _cartRepository.ClearCart(doCommandAndClearCartDto.CartId);
+        await _customerRepository.DecreaseBalance(theCustomer.CustomerId,theCommand.Price);
+        await _cartRepository.ClearCart(doCommandAndClearCartDto.CartId);
         return true;
     }
 
-    public Command Create(ICollection<DrinkCopy> drinkCopies, int customerId)
+    public async Task<bool> ConfirmCommandDeliveredAndPay(ConfirmCommandDeliveredAndPayDto confirmCommandDeliveredAndPayDto)
     {
-        throw new NotImplementedException();
+        var theCommand = await _context.Commands.FindAsync(confirmCommandDeliveredAndPayDto.CommandId);
+        if (theCommand is null || theCommand.CommandStatus == CommandStatus.Done) return false;
+        var theCustomer = await _context.Customers.FindAsync(confirmCommandDeliveredAndPayDto.CustomerId);
+        if (theCustomer is null) return false;
+        // La commande est archivée
+        theCommand.CommandStatus = CommandStatus.Done;
+        _context.Commands.Update(theCommand);
+        return true;
     }
+    
+    public async Task<bool> CancelCommand(CancelCommandDto cancelCommandDto)
+    {
+        var theCommand = await _context.Commands.FindAsync(cancelCommandDto.CommandId);
+        if (theCommand is null || theCommand.CommandStatus == CommandStatus.Done) return false;
+        var theCustomer = await _context.Customers.FindAsync(cancelCommandDto.CustomerId);
+        if (theCustomer is null) return false;
+        // On rembourse le client
+        await _customerRepository.IncreaseBalance(theCustomer.CustomerId, theCommand.Price);
+        // On supprime la commande
+        await _context.Commands.Where(command=>command.CommandId==cancelCommandDto.CommandId).ExecuteDeleteAsync();
+        return true;
+    }
+    
 }

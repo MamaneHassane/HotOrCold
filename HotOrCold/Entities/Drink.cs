@@ -12,7 +12,7 @@ public class Drink
     public int DrinkId { get; set; }
     
     // Le type de la boisson
-    [Range(0,6)]
+    [Range(0,7)]
     public int Drinktype { get; set; }
     // Le nom de la boisson
     public string DrinkName 

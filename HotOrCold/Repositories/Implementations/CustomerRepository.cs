@@ -17,8 +17,6 @@ public class CustomerRepository(ApplicationDbContext context, ICartRepository ca
         await _context.Customers.AddAsync(customer);
         // Lui créér un Cart
         var newCartOfCustomer = new Cart();
-        // L'associer avec son identifiant
-        newCartOfCustomer.CustomerId = customer.CustomerId;
         // Sauvegarder son cart
         await _cartRepository.Create(newCartOfCustomer);
         customer.CartId = newCartOfCustomer.CartId;

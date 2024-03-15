@@ -2,10 +2,10 @@ using HotOrCold.Entities;
 
 namespace HotOrCold.Dtos.Definitions;
 
-public record CreateCommandDto
+public class CreateCommandDto
 {
-    public IEnumerable<DrinkCopy> DrinkCopies { get; }
-    public int CustomerId { get; }
+    public IEnumerable<DrinkCopy> DrinkCopies { get; set; }
+    public int CustomerId { get; set; }
     public CreateCommandDto(IEnumerable<DrinkCopy> drinkCopies, int customerId)
     {
         DrinkCopies = drinkCopies;
@@ -13,16 +13,23 @@ public record CreateCommandDto
     }
 } 
 
-public record DoCommandAndClearCartDto (
-    IEnumerable<DrinkCopy> DrinkCopies,
-    int CustomerId,
-    int CartId
-);
+public class DoCommandAndClearCartDto
+{
+    public IEnumerable<DrinkCopy> DrinkCopies { get; set; }
+    public int CustomerId { get; set; }
+    public int CartId { get; set; }
+}
 
-public record ReadCommandDto (
-    // Pas besoin pour l'instant
-);
+public class ConfirmCommandDeliveredAndPayDto
+{
+    public int CommandId { get; set; }
+    public int CustomerId { get; set; }
+}
 
-public record UpdateCommandDto (
-    // Pas besoin pour l'instant
-);
+public class CancelCommandDto
+{
+    public int CommandId { get; set; }
+    public int CustomerId { get; set; }
+}
+   
+

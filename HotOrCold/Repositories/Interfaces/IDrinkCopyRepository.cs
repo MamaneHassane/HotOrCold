@@ -1,4 +1,3 @@
-using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 
 namespace HotOrCold.Repositories.Interfaces;
