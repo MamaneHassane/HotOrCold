@@ -66,6 +66,8 @@ public class CustomerRepository(ApplicationDbContext context, ICartRepository ca
     }
     public async Task<bool> Delete(int id)
     {
+        var theCustomer = await _context.Customers.FindAsync(id);
+        await _context.Carts.Where(cart => cart.CartId == theCustomer.CartId).ExecuteDeleteAsync();
         await _context.Customers.Where(customer => customer.CustomerId == id).ExecuteDeleteAsync();
         return true;
     }

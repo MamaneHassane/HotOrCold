@@ -8,7 +8,7 @@ public class Customer
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CustomerId { get; set; }
-
+    
     [Required] [StringLength(100, ErrorMessage = "Essayer s'il vous plaît de raccourcir le nom")]
     public required string Lastname { get; set; }
 

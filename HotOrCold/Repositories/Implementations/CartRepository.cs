@@ -10,6 +10,10 @@ public class CartRepository : ICartRepository
 {
     private readonly ApplicationDbContext _context;
 
+    public async Task<IEnumerable<Cart?>> GetAll()
+    {
+        return await _context.Carts.ToListAsync();
+    }
     public CartRepository(ApplicationDbContext context)
     {
         _context = context;

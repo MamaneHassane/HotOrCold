@@ -21,7 +21,8 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         {
             CustomerId = theCustomer.CustomerId,
             DrinkCopies = createCommandDto.DrinkCopies,
-            CommandDate = DateOnly.FromDateTime(DateTime.Today)
+            CommandDate = DateOnly.FromDateTime(DateTime.Today),
+            Price = createCommandDto.Price
         };
         _context.Commands.Add(theCommand);
         _context.SaveChanges();
@@ -86,10 +87,21 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
     public async Task<bool> DoCommandAndClearCart(DoCommandAndClearCartDto doCommandAndClearCartDto)
     {
         var theCustomer = await _context.Customers.FindAsync(doCommandAndClearCartDto.CustomerId);
-        if (theCustomer is null) return false;    
+        if (theCustomer is null) return false;
+        double price = 0;
+        var theDrinkCopies = new List<DrinkCopy>();
+        foreach (var id in doCommandAndClearCartDto.DrinkCopiesIds)
+        {
+            var theDrinkCopy = await _context.DrinkCopies.FindAsync(id);
+            if (theDrinkCopy is not null)
+            {
+                theDrinkCopies.Add(theDrinkCopy);
+                price += theDrinkCopy.Price;
+            }
+        }
         var theCommand = Create
         (
-            new CreateCommandDto(doCommandAndClearCartDto.DrinkCopies ,doCommandAndClearCartDto.CustomerId)                 
+            new CreateCommandDto(theDrinkCopies ,doCommandAndClearCartDto.CustomerId, price)                 
         );
         if (theCommand is null || theCommand.Price>theCustomer.Balance) return false;
         // Le client paye
@@ -107,20 +119,30 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         // La commande est archivée
         theCommand.CommandStatus = CommandStatus.Done;
         _context.Commands.Update(theCommand);
+        await _context.SaveChangesAsync();
         return true;
     }
     
     public async Task<bool> CancelCommand(CancelCommandDto cancelCommandDto)
     {
-        var theCommand = await _context.Commands.FindAsync(cancelCommandDto.CommandId);
+        var theCommand = await _context.Commands.Where(command=>command.CommandId==cancelCommandDto.CommandId)
+            .Include(command=>command.DrinkCopies)
+            .FirstOrDefaultAsync();
         if (theCommand is null || theCommand.CommandStatus == CommandStatus.Done) return false;
         var theCustomer = await _context.Customers.FindAsync(cancelCommandDto.CustomerId);
         if (theCustomer is null) return false;
+        // On supprime toutes les copies à livrer
+        foreach (var theDrinkCopy in theCommand.DrinkCopies)
+        {
+            await _context.DrinkCopies.Where(drinkCopy=>drinkCopy.DrinkCopyId==theDrinkCopy.DrinkCopyId).ExecuteDeleteAsync();
+        }
         // On rembourse le client
         await _customerRepository.IncreaseBalance(theCustomer.CustomerId, theCommand.Price);
         // On supprime la commande
         await _context.Commands.Where(command=>command.CommandId==cancelCommandDto.CommandId).ExecuteDeleteAsync();
+        await _context.SaveChangesAsync();
         return true;
     }
     
 }
+ 

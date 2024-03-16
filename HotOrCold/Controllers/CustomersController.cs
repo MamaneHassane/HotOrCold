@@ -67,7 +67,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
         }
     }
 
-    [HttpPost("delete")]
+    [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult<bool>> DeleteAccount(int id)
     {
        var deleted = await _customerRepository.Delete(id);

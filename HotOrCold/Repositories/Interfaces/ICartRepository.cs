@@ -5,6 +5,7 @@ namespace HotOrCold.Repositories.Interfaces;
 
 public interface ICartRepository
 {
+    Task<IEnumerable<Cart?>> GetAll();
     Task<Cart> Create(Cart cart);
     Task<Cart?> Get(int id);
     Task<bool> ClearCart(int cartId);

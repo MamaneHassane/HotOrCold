@@ -10,6 +10,19 @@ public class CartsController(ICartRepository cartRepository) : ControllerBase
 {
     private readonly ICartRepository _cartRepository = cartRepository;
     
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Cart?>>> GetAllCarts()
+    {
+        try
+        {
+            return Ok(await _cartRepository.GetAll());
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite dans la recherche de panier");
+        }
+    }
+    
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Cart?>> GetCartById(int id)
     {
@@ -21,7 +34,6 @@ public class CartsController(ICartRepository cartRepository) : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur s'est produite dans la recherche de panier");
         }
-        
     }
     
     [HttpPost("addDrinkCopy")]
