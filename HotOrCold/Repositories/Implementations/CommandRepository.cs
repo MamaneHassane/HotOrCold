@@ -41,7 +41,7 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         return command;
     }
     
-    public async Task<Command?> Create(ICollection<DrinkCopy> drinkCopies, int customerId)
+    public async Task<Command?> Create(IEnumerable<DrinkCopy> drinkCopies, int customerId)
     {
         var command = new Command
         {
@@ -88,16 +88,14 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
     {
         var theCustomer = await _context.Customers.FindAsync(doCommandAndClearCartDto.CustomerId);
         if (theCustomer is null) return false;
+        var theCart = await _context.Carts.Where(cart=>cart.CartId==theCustomer.CartId).Include(cart=>cart.DrinkCopies).FirstOrDefaultAsync();
+        if (theCart?.DrinkCopies is null) return false;
         double price = 0;
         var theDrinkCopies = new List<DrinkCopy>();
-        foreach (var id in doCommandAndClearCartDto.DrinkCopiesIds)
+        foreach (var theDrinkCopy in theCart.DrinkCopies)
         {
-            var theDrinkCopy = await _context.DrinkCopies.FindAsync(id);
-            if (theDrinkCopy is not null)
-            {
-                theDrinkCopies.Add(theDrinkCopy);
-                price += theDrinkCopy.Price;
-            }
+            theDrinkCopies.Add(theDrinkCopy);
+            price += theDrinkCopy.Price;
         }
         var theCommand = Create
         (
@@ -110,11 +108,11 @@ public class CommandRepository(ApplicationDbContext context, ICartRepository car
         return true;
     }
 
-    public async Task<bool> ConfirmCommandDeliveredAndPay(ConfirmCommandDeliveredAndPayDto confirmCommandDeliveredAndPayDto)
+    public async Task<bool> ConfirmCommandDeliveredAndPayed(ConfirmCommandDeliveredAndPayedDto confirmCommandDeliveredAndPayedDto)
     {
-        var theCommand = await _context.Commands.FindAsync(confirmCommandDeliveredAndPayDto.CommandId);
+        var theCommand = await _context.Commands.FindAsync(confirmCommandDeliveredAndPayedDto.CommandId);
         if (theCommand is null || theCommand.CommandStatus == CommandStatus.Done) return false;
-        var theCustomer = await _context.Customers.FindAsync(confirmCommandDeliveredAndPayDto.CustomerId);
+        var theCustomer = await _context.Customers.FindAsync(confirmCommandDeliveredAndPayedDto.CustomerId);
         if (theCustomer is null) return false;
         // La commande est archivée
         theCommand.CommandStatus = CommandStatus.Done;

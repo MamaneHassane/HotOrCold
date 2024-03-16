@@ -12,12 +12,11 @@ public class CreateCommandDto(IEnumerable<DrinkCopy> drinkCopies, int customerId
 
 public class DoCommandAndClearCartDto
 {
-    public IEnumerable<int> DrinkCopiesIds { get; set; }
     public int CustomerId { get; set; }
     public int CartId { get; set; }
 }
 
-public class ConfirmCommandDeliveredAndPayDto
+public class ConfirmCommandDeliveredAndPayedDto
 {
     public int CommandId { get; set; }
     public int CustomerId { get; set; }

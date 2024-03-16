@@ -58,11 +58,11 @@ public class CommandsController(ICommandRepository commandRepository) : Controll
     }
 
     [HttpPost("confirmCommand")]
-    public async Task<ActionResult<Command>> ConfirmCommand([FromBody] ConfirmCommandDeliveredAndPayDto confirmCommandDeliveredAndPayDto)
+    public async Task<ActionResult<Command>> ConfirmCommand([FromBody] ConfirmCommandDeliveredAndPayedDto confirmCommandDeliveredAndPayedDto)
     {
         try
         {
-            return Ok(await _commandRepository.ConfirmCommandDeliveredAndPay(confirmCommandDeliveredAndPayDto));
+            return Ok(await _commandRepository.ConfirmCommandDeliveredAndPayed(confirmCommandDeliveredAndPayedDto));
         }
         catch (Exception exception)
         {
