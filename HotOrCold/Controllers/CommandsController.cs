@@ -82,7 +82,37 @@ public class CommandsController(ICommandRepository commandRepository) : Controll
         {
             Console.WriteLine(exception);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                "Une erreur s'est rpoduite lors de l'annulation de la commande");
+                "Une erreur s'est produite lors de l'annulation de la commande");
+        }
+    }
+
+    [HttpGet("getActivesCommands/{id:int}")]
+    public async Task<ActionResult<IEnumerable<Command?>?>> GetActivesCommandByCustomerId(int id)
+    {
+        try
+        {
+            return Ok(await _commandRepository.GetActivesCommandByCustomerId(id));
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Une erreur s'est produite lors de la recherche des commandes en cours");
+        }
+    }
+    
+    [HttpGet("getHistorizedCommands/{id:int}")]
+    public async Task<ActionResult<IEnumerable<Command?>?>> GetHistorizedCommandByCustomerId(int id)
+    {
+        try
+        {
+            return Ok(await _commandRepository.GetHistorizedCommandByCustomerId(id));
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Une erreur s'est produite lors de la recherche des anciennes commandes");
         }
     }
 }

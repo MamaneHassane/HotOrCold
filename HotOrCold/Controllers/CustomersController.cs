@@ -67,6 +67,21 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
         }
     }
 
+    [HttpPost("increaseBalance/{id:int}/{amount:double}")]
+    public async Task<ActionResult<bool>> IncreaseCustomerBalance(int id, double amount)
+    {
+        try
+        {
+            return Ok(await _customerRepository.IncreaseBalance(id, amount));
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Une erreur s'est produite lors de l'ajout de l'argent");
+        }
+    }
+
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult<bool>> DeleteAccount(int id)
     {
