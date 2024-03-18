@@ -2,6 +2,7 @@ using HotOrCold.Datas;
 using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using HotOrCold.Security.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotOrCold.Repositories.Implementations;
@@ -23,12 +24,12 @@ public class CustomerRepository(ApplicationDbContext context, ICartRepository ca
         await _context.SaveChangesAsync();
         return customer;
     }
-    public async Task<Customer?> Authenticate(CustomerAuthenticationDto customerAuthenticationDto)
+    public async Task<Customer?> Authenticate(TokenGenerationRequest tokenGenerationRequest)
     {
         var customerFound = await _context.Customers.Where(customer =>
-                customer.Username == customerAuthenticationDto.Username
+                customer.Username == tokenGenerationRequest.Username
                 &&
-                customer.Password == customerAuthenticationDto.Password
+                customer.Password == tokenGenerationRequest.Password
         ).FirstOrDefaultAsync();
         return customerFound;
     }

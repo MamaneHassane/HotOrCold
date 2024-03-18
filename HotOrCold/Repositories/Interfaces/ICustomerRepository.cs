@@ -1,12 +1,12 @@
-using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
+using HotOrCold.Security.Models;
 
 namespace HotOrCold.Repositories.Interfaces;
 
 public interface ICustomerRepository
 {
     Task<Customer> Register(Customer customer);
-    Task<Customer?> Authenticate(CustomerAuthenticationDto customer);
+    Task<Customer?> Authenticate(TokenGenerationRequest tokenGenerationRequest);
     Task<IEnumerable<Customer>> GetAll();
     Task<Customer?> Get(int id);
     Task<Customer?> Update(Customer updatedCustomer);

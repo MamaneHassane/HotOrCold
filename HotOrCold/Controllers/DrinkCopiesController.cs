@@ -1,5 +1,6 @@
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotOrCold.Controllers;
@@ -33,6 +34,7 @@ public class DrinkCopiesController(IDrinkCopyRepository drinkCopyRepository) : C
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<List<DrinkCopy>>> GetAll()
     {
         try

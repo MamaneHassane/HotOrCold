@@ -33,18 +33,6 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
         }
     }
 
-    [HttpPost("authenticate")]
-    public async Task<ActionResult<Customer?>> Authenticate([FromBody] CustomerAuthenticationDto customer)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest("Il y'a une erreur dans la requête, réessayez plus tard");
-        }
-        var customerFound = await _customerRepository.Authenticate(customer);
-        if (customerFound is null) return NotFound("Le nom d'utilisateur ou mot de passe est incorrecte");
-        return Ok(customerFound);
-    }
-
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Customer>> ConsultAccount(int id)
     {
