@@ -57,6 +57,7 @@ builder.Services.AddScoped<ICommandRepository, CommandRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
 builder.Services.AddScoped<IDrinkCopyRepository, DrinkCopyRepository>();
+builder.Services.AddScoped<IAdministratorRepository, AdministratorRepository>();
 // Construire l'application
 var app = builder.Build();
 

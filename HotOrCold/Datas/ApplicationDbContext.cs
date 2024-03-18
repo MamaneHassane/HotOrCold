@@ -18,7 +18,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Cart> Carts => Set<Cart>();
     // Les commandes, un Customer donne lieu à plusieurs commandes, un commande vient d'un seul Customer
     public DbSet<Command> Commands => Set<Command>();
-
+    // Les administrateurs, un administrateur a accèes à toutes les méthodes
+    public DbSet<Administrator> Administrators => Set<Administrator>();
     // Création de model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,5 +1,4 @@
 using HotOrCold.Datas;
-using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
 using HotOrCold.Security.Models;
