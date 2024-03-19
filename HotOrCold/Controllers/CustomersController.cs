@@ -1,6 +1,8 @@
 using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using HotOrCold.Security.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotOrCold.Controllers;
@@ -12,6 +14,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
     private readonly ICustomerRepository _customerRepository = customerRepository;
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<ActionResult<Customer>> Register([FromBody] Customer customer)
     {
         Console.WriteLine("Reached here");
@@ -34,6 +37,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
     }
 
     [HttpGet("{id:int}")]
+    [RequiresClaim(IdentityData.CustomerPolicyName,IdentityData.CustomerClaimValue)]
     public async Task<ActionResult<Customer>> ConsultAccount(int id)
     {
         var customer = await _customerRepository.Get(id);
@@ -42,6 +46,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
     }
 
     [HttpGet]
+    [RequiresClaim(IdentityData.AdminPolicyName,IdentityData.AdminClaimValue)]
     public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers()
     {
         try
@@ -55,6 +60,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
         }
     }
 
+    [RequiresClaim(IdentityData.CustomerPolicyName,IdentityData.CustomerClaimValue)]
     [HttpPost("increaseBalance/{id:int}/{amount:double}")]
     public async Task<ActionResult<bool>> IncreaseCustomerBalance(int id, double amount)
     {
@@ -71,6 +77,7 @@ public class CustomersController(ICustomerRepository customerRepository) : Contr
     }
 
     [HttpDelete("delete/{id:int}")]
+    [RequiresClaim(IdentityData.CustomerPolicyName,IdentityData.CustomerClaimValue)]
     public async Task<ActionResult<bool>> DeleteAccount(int id)
     {
        var deleted = await _customerRepository.Delete(id);

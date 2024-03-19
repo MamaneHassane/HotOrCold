@@ -17,19 +17,19 @@ public class Drink
     // Le nom de la boisson
     public string DrinkName 
     {
-        get 
+        get
         {
-            switch (Drinktype)
+            return Drinktype switch
             {
-                case 0 : return DrinkType.BlackCoffee.ToString();
-                case 1 : return DrinkType.LongCoffee.ToString();
-                case 2 : return DrinkType.Expresso.ToString();
-                case 4 : return DrinkType.Tea.ToString();
-                case 5 : return DrinkType.Milk.ToString();
-                case 6 : return DrinkType.CoffeeMilk.ToString(); 
-                case 7 : return DrinkType.MachaLatte.ToString(); 
-            }
-            return DrinkType.Unclassified.ToString();
+                0 => DrinkType.BlackCoffee.ToString(),
+                1 => DrinkType.LongCoffee.ToString(),
+                2 => DrinkType.Expresso.ToString(),
+                4 => DrinkType.Tea.ToString(),
+                5 => DrinkType.Milk.ToString(),
+                6 => DrinkType.CoffeeMilk.ToString(),
+                7 => DrinkType.MachaLatte.ToString(),
+                _ => DrinkType.Unclassified.ToString()
+            };
         }
     }
 

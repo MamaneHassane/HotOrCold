@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace HotOrCold.Controllers;
 [ApiController]
 [Route("/api/administrators")]
+[RequiresClaim(IdentityData.AdminPolicyName,IdentityData.AdminClaimValue)]
 public class AdministratorController(IAdministratorRepository administratorRepository) : ControllerBase
 {
     private readonly IAdministratorRepository _administratorRepository = administratorRepository;
     
-    // [RequiresClaim(IdentityData.AdminPolicyName,IdentityData.AdminClaimValue)]
     [HttpPost("register")]
     public async Task<ActionResult<Customer>> Register([FromBody] Administrator administrator)
     {

@@ -1,6 +1,7 @@
 using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using HotOrCold.Security.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace HotOrCold.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
+[RequiresClaim(IdentityData.CustomerPolicyName,IdentityData.CustomerClaimValue)]
 public class CommandsController(ICommandRepository commandRepository) : ControllerBase
 {
     private readonly ICommandRepository _commandRepository = commandRepository;

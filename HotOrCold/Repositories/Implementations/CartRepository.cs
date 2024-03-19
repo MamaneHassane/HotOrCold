@@ -43,13 +43,14 @@ public class CartRepository : ICartRepository
 
     public async Task<bool> AddDrinkCopyToCart(AddDrinkCopyDto addDrinkCopyDto)
     {
+        // S'assurer que le Drink existe selon l'id
         var theDrink = await _context.Drinks.FindAsync((addDrinkCopyDto.DrinkId));
         var theCart = await _context.Carts.FindAsync(addDrinkCopyDto.CartId);
         if (theDrink is null || theCart is null) return false;
         var drinkCopy = new DrinkCopy
         {
-            // S'assurer que le Drink existe selon l'id
             DrinkId = theDrink.DrinkId,
+            DrinkStateType = addDrinkCopyDto.DrinkStateType,
             Price = theDrink.PricePerLiter * addDrinkCopyDto.QuantityInLiter,
             QuantityInLiter = addDrinkCopyDto.QuantityInLiter,
             CartId = theCart.CartId
@@ -73,6 +74,7 @@ public class CartRepository : ICartRepository
                 var drinkCopy = new DrinkCopy
                 {
                     DrinkId = theDrink.DrinkId, 
+                    DrinkStateType = addDrinkCopyDto.DrinkStateType,
                     Price = theDrink.PricePerLiter*addDrinkCopyDto.QuantityInLiter,
                     QuantityInLiter = addDrinkCopyDto.QuantityInLiter,
                     CartId = theCart.CartId

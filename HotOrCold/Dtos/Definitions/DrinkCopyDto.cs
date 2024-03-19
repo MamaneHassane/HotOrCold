@@ -4,6 +4,7 @@ public class AddDrinkCopyDto
 {
     public int CartId { get; set; }
     public int DrinkId { get; set; }
+    public int DrinkStateType { get; set; }
     public double QuantityInLiter { get; set; }
 };
 

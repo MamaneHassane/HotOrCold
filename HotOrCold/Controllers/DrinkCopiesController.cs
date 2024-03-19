@@ -1,5 +1,6 @@
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using HotOrCold.Security.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace HotOrCold.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
+[RequiresClaim(IdentityData.CustomerPolicyName,IdentityData.CustomerClaimValue)]
 public class DrinkCopiesController(IDrinkCopyRepository drinkCopyRepository) : ControllerBase
 {
     private readonly IDrinkCopyRepository _drinkCopyRepository = drinkCopyRepository;
@@ -20,7 +22,6 @@ public class DrinkCopiesController(IDrinkCopyRepository drinkCopyRepository) : C
         }
         try
         {
-            
             // return Created($"/api/drinkcopies/{drinkCopy.DrinkId}",await _drinkCopyRepository.Create(drinkCopy));
             return Ok(await _drinkCopyRepository.Create(drinkCopy));
         }

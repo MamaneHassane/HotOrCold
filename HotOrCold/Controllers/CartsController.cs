@@ -1,11 +1,13 @@
 using HotOrCold.Dtos.Definitions;
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using HotOrCold.Security.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotOrCold.Controllers;
 [ApiController]
 [Route("/api/[Controller]")]
+[RequiresClaim(IdentityData.CustomerPolicyName,IdentityData.CustomerClaimValue)]
 public class CartsController(ICartRepository cartRepository) : ControllerBase
 {
     private readonly ICartRepository _cartRepository = cartRepository;

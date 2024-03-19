@@ -1,11 +1,13 @@
 using HotOrCold.Entities;
 using HotOrCold.Repositories.Interfaces;
+using HotOrCold.Security.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotOrCold.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
+[RequiresClaim(IdentityData.AdminPolicyName,IdentityData.AdminClaimValue)]
 public class DrinksController(IDrinkRepository drinkRepository) : ControllerBase
 {
     private readonly IDrinkRepository _drinkRepository = drinkRepository;
